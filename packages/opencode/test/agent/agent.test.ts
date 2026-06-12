@@ -459,6 +459,32 @@ it.instance(
   },
 )
 
+it.instance(
+  "Agent.list uses configured agent_order before alphabetical fallback",
+  () =>
+    Effect.gen(function* () {
+      const names = (yield* load((svc) => svc.list())).map((a) => a.name)
+      expect(names.slice(0, 3)).toEqual(["zebra", "plan", "alpha"])
+      expect(names.slice(3)).toEqual(names.slice(3).toSorted((a, b) => a.localeCompare(b)))
+    }),
+  {
+    config: {
+      default_agent: "build",
+      agent_order: ["zebra", "plan", "missing", "alpha"],
+      agent: {
+        zebra: {
+          description: "Zebra",
+          mode: "primary",
+        },
+        alpha: {
+          description: "Alpha",
+          mode: "primary",
+        },
+      },
+    },
+  },
+)
+
 it.instance("Agent.get returns undefined for non-existent agent", () =>
   Effect.gen(function* () {
     const nonExistent = yield* load((svc) => svc.get("does_not_exist"))

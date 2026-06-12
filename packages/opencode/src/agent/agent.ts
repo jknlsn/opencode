@@ -315,6 +315,19 @@ const layer = Layer.effect(
 
         const list = Effect.fnUntraced(function* () {
           const cfg = yield* config.get()
+          const configured = cfg.agent_order ?? []
+          if (configured.length > 0) {
+            const order = new Map(configured.map((name, index) => [name, index]))
+            return pipe(
+              agents,
+              values(),
+              sortBy(
+                [(x) => (order.has(x.name) ? 0 : 1), "asc"],
+                [(x) => order.get(x.name) ?? Number.POSITIVE_INFINITY, "asc"],
+                [(x) => x.name, "asc"],
+              ),
+            )
+          }
           return pipe(
             agents,
             values(),
