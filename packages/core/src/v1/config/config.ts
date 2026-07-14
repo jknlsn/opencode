@@ -80,6 +80,10 @@ export const Info = Schema.Struct({
     description:
       "Default agent to use when none is specified. Must be a primary agent. Falls back to 'build' if not set or if the specified agent is invalid.",
   }),
+  agent_order: Schema.optional(Schema.mutable(Schema.Array(Schema.String))).annotate({
+    description:
+      "Agent display and cycling order. Listed agents appear first in this order; unlisted agents follow alphabetically.",
+  }),
   username: Schema.optional(Schema.String).annotate({
     description: "Custom username to display in conversations instead of system username",
   }),
